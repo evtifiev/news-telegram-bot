@@ -155,15 +155,15 @@ class DB:
 
     def search_news(self, text):
         """Поиск по новостям(находим все новости и устанавливаем лимит в 3)"""
-        clock_in_half_hour = datetime.now() - timedelta(hours=24)  # Выбираем новости за сутки от текущего времени
-        query = "SELECT title, description, link FROM news WHERE title like ? or description like ?  and public_date > ? LIMIT 3"
-        args = ('%{}%'.format(text), '%{}%'.format(text), clock_in_half_hour.strftime("%Y-%m-%d %H:%M:%S"))
+        clock_in_half_hour = datetime.today()  # Выбираем новости за сутки от текущего времени
+        query = "SELECT title, description, link FROM news WHERE public_date > ? and (title like ? or description like ?)"
+        args = (clock_in_half_hour.strftime("%Y-%m-%d 00:00:00"),'%{}%'.format(text), '%{}%'.format(text))
         self.cursor.execute(query, args)
         news = self.cursor.fetchall()
         if len(news) > 0:
             return news
         else:
-            args = ('%{}%'.format(text.title()), '%{}%'.format(text.title()), clock_in_half_hour.strftime("%Y-%m-%d %H:%M:%S"))
+            args = (clock_in_half_hour.strftime("%Y-%m-%d 00:00:00"),'%{}%'.format(text.title()), '%{}%'.format(text.title()))
             self.cursor.execute(query, args)
             news = self.cursor.fetchall()
             return news
